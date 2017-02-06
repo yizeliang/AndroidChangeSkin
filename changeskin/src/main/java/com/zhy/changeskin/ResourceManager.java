@@ -49,7 +49,6 @@ public class ResourceManager
     public int getColor(String name) throws Resources.NotFoundException
     {
         name = appendSuffix(name);
-        L.e("name = " + name);
         return mResources.getColor(mResources.getIdentifier(name, DEFTYPE_COLOR, mPluginPackageName));
     }
 
@@ -58,7 +57,6 @@ public class ResourceManager
         try
         {
             name = appendSuffix(name);
-            L.e("name = " + name);
             return mResources.getColorStateList(mResources.getIdentifier(name, DEFTYPE_COLOR, mPluginPackageName));
 
         } catch (Resources.NotFoundException e)

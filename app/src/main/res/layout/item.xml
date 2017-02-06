@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:theme="@style/TextColorTheme"
-                android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:orientation="vertical"
+    android:theme="@style/TextColorTheme">
 
     <ImageView
         android:id="@+id/id_iv_icon"
@@ -11,27 +11,27 @@
         android:layout_height="42dp"
         android:layout_centerVertical="true"
         android:layout_marginRight="8dp"
-        android:tag="skin:left_menu_icon:src"
-        android:src="@drawable/left_menu_icon"/>
+        android:src="@drawable/left_menu_icon"
+        android:tag="skin:left_menu_icon:src" />
 
-    <TextView android:id="@+id/id_tv_title"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="玩Android"
-              android:tag="skin:item_text_color:textColor"
-              android:textColor="@color/item_text_color"
-              android:layout_toRightOf="@id/id_iv_icon"
-              android:layout_alignTop="@id/id_iv_icon"
-        />
+    <TextView
+        android:id="@+id/id_tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/id_iv_icon"
+        android:layout_toRightOf="@id/id_iv_icon"
+        android:tag="skin:item_text_color:textColor"
+        android:text="玩Android"
+        android:textColor="@color/item_text_color" />
 
-    <TextView android:id="@+id/id_tv_tip"
-              android:layout_width="wrap_content"
-              android:tag="skin:item_text_color:textColor"
-              android:layout_height="wrap_content"
-              android:textColor="@color/item_text_color"
-              android:text="鸿洋"
-              android:layout_toRightOf="@id/id_iv_icon"
-              android:layout_alignBottom="@id/id_iv_icon"
-             />
+    <TextView
+        android:id="@+id/id_tv_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/id_iv_icon"
+        android:layout_toRightOf="@id/id_iv_icon"
+        android:tag="skin:item_text_color:textColor"
+        android:text="鸿洋"
+        android:textColor="@color/item_text_color" />
 
 </RelativeLayout>

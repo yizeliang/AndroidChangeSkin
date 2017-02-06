@@ -1,6 +1,26 @@
 # AndroidChangeSkin
 一种完全无侵入的换肤方式，支持插件式和应用内，无需重启Activity.
 
+
+## 需要修改内容
+-  生命周期优化
+-  listview根节点view 是否会由于tag的影响造成复用
+-  recycleview的复用问题 动态改变问题
+-  加载失败 resourceManager回滚问题
+
+## 已完成
+
+-version 2.0
+```java
+1 修复padding失效
+2 修复background 设置color失效的问题
+3 抽取工具类,可以给任何view手动换肤
+4 针对viewpager的说明:可以再创建的时候调用上面的工具类,完成换肤,如果已经加载的,关于监听,已经在activity中进行了监听,那么就能够实现动态换肤,不需要再对观察者进行处理
+5 
+```
+
+## super md
+
 与之前发布的ChangeSkin思路完全不同[https://github.com/hongyangAndroid/ChangeSkin](https://github.com/hongyangAndroid/ChangeSkin)，主要因为ChangeSkin依赖V4，V7的版本，以及干涉系统构造View的过程，于是希望找到一个几乎没有侵入的方式来实现，于是产生了AndroidChangeSkin，两个项目各有特点，目前两个项目代码都保留，欢迎试用与反馈。
 
 

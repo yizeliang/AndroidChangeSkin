@@ -2,6 +2,8 @@ package com.zhy.changeskin.attr;
 
 import android.view.View;
 
+import com.zhy.changeskin.ResourceManager;
+
 /**
  * Created by zhy on 15/9/22.
  */
@@ -19,6 +21,10 @@ public class SkinAttr
 
     public void apply(View view)
     {
-        attrType.apply(view, resName);
+        attrType.apply(view, resName,null);
+    }
+
+    public void apply(View view, ResourceManager resourceManager) {
+        attrType.apply(view, resName,resourceManager);
     }
 }

@@ -28,6 +28,16 @@ public class SkinAttrSupport
     }
 
     /**
+     * 传入View，递归遍历所有的子View，根据tag命名，记录需要换肤的View
+     */
+    public static List<SkinView> getSkinViews(View View)
+    {
+        List<SkinView> skinViews = new ArrayList<SkinView>();
+        addSkinViews(View, skinViews);
+        return skinViews;
+    }
+
+    /**
      * 传入activity，找到content元素，递归遍历所有的子View，根据tag命名，记录需要换肤的View
      *
      * @param activity
