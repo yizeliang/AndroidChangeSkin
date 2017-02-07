@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Toast;
 
 import com.zhy.changeskin.SkinManager;
 import com.zhy.changeskin.modle.SkinInfo;
@@ -58,7 +57,6 @@ public abstract class SkinAcitivity extends AppCompatActivity implements SkinInt
         //在后台的情况
         if (isSkinLazyApply() && (!isActShowing)) {
             isSkinChanged = true;
-            Toast.makeText(this, "等待懒加载", Toast.LENGTH_LONG).show();
             return;
         }
         isSkinChanged = false;
@@ -87,7 +85,6 @@ public abstract class SkinAcitivity extends AppCompatActivity implements SkinInt
 
         if (isNeedSkin() && isSkinLazyApply() && isSkinChanged) {
             apply();
-            Toast.makeText(this, "懒加载成功", Toast.LENGTH_LONG).show();
             isSkinChanged = false;
         }
     }
