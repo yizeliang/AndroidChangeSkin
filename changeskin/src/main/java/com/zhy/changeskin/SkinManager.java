@@ -259,7 +259,7 @@ public class SkinManager {
         }
     }
 
-    public void applyView(View view, SkinInfo skinInfo) {
+    public void injectSkin(View view, SkinInfo skinInfo) {
         List<SkinView> skinViews = SkinAttrSupport.getSkinViews(view);
         for (SkinView skinView : skinViews) {
             skinView.apply(generateResourceManager(skinInfo));
