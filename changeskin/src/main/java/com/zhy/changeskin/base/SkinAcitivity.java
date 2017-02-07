@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Toast;
 
 import com.zhy.changeskin.SkinManager;
 import com.zhy.changeskin.modle.SkinInfo;
@@ -14,28 +15,37 @@ import com.zhy.changeskin.modle.SkinInfo;
  */
 public abstract class SkinAcitivity extends AppCompatActivity implements SkinInterface {
 
-    private View contentView;
+    protected View contentView;
 
     /**
      * 记录皮肤ID
      */
-    private String mCurSkinId;
+    protected String mCurSkinId;
+
+    /**
+     * 皮肤是否更换_用于 延迟换肤
+     */
+    protected boolean isSkinChanged;
+
+    /**
+     * 当前Acitivity 是否显示
+     */
+    protected boolean isActShowing;
+
+    /**
+     * 是否第一次运行
+     */
+    protected boolean isFirstRun = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (isNeedSkin()) {
             SkinManager.getInstance().register(this);
-            getContentView().post(new Runnable() {
-                @Override
-                public void run() {
-                    apply();
-                }
-            });
         }
     }
 
-    private View getContentView() {
+    protected View getContentView() {
         if (contentView == null) {
             contentView = findViewById(android.R.id.content);
         }
@@ -45,20 +55,47 @@ public abstract class SkinAcitivity extends AppCompatActivity implements SkinInt
 
     @Override
     public void apply() {
-        if (TextUtils.isEmpty(mCurSkinId)) {
-            mCurSkinId = SkinManager.getInstance().getCurSkin().getSkinId();
-            if (TextUtils.isEmpty(mCurSkinId)) {
-                mCurSkinId = SkinInfo.defaultSkin.getSkinId();
-            }
+        //在后台的情况
+        if (isSkinLazyApply() && (!isActShowing)) {
+            isSkinChanged = true;
+            Toast.makeText(this, "等待懒加载", Toast.LENGTH_LONG).show();
+            return;
         }
-
+        isSkinChanged = false;
+        //执行换肤
+        if (TextUtils.isEmpty(mCurSkinId)) {
+            mCurSkinId = SkinInfo.defaultSkin.getSkinId();
+        }
         if (mCurSkinId.equals(SkinManager.getInstance().getCurSkin().getSkinId())) {
             return;
         } else {
             mCurSkinId = SkinManager.getInstance().getCurSkin().getSkinId();
+            SkinManager.getInstance().injectSkin(getContentView());
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isActShowing = true;
+
+        //初次运行
+        if (isFirstRun) {
+            apply();
+            isFirstRun = false;
         }
 
-        SkinManager.getInstance().injectSkin(getContentView());
+        if (isNeedSkin() && isSkinLazyApply() && isSkinChanged) {
+            apply();
+            Toast.makeText(this, "懒加载成功", Toast.LENGTH_LONG).show();
+            isSkinChanged = false;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isActShowing = false;
     }
 
     @Override
@@ -68,4 +105,5 @@ public abstract class SkinAcitivity extends AppCompatActivity implements SkinInt
         }
         super.onDestroy();
     }
+
 }

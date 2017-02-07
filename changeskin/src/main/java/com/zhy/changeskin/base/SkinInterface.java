@@ -17,8 +17,8 @@ public interface SkinInterface {
     boolean isNeedSkin();
 
     /**
-     * 懒加载 ,在onResume方法中进行换肤?
+     * 懒加载 ,在onResume方法中进行换肤
      * @return
      */
-    boolean isNeedLazyApply();
+    boolean isSkinLazyApply();
 }

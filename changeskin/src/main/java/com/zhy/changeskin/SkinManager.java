@@ -28,11 +28,11 @@ import java.util.List;
  */
 public class SkinManager {
     private Context mContext;
+
     private ResourceManager mResourceManager;
     private PrefUtils mPrefUtils;
 
     private SkinInfo mCurSkinInfo = SkinInfo.defaultSkin;
-
 
     private List<SkinInterface> mInterFaces = new ArrayList<>();
 
@@ -51,21 +51,28 @@ public class SkinManager {
     public void init(Context context) {
         mContext = context.getApplicationContext();
         mPrefUtils = new PrefUtils(mContext);
+        /**
+         * 如何没有获取到保存的皮肤,就设置为默认皮肤
+         */
+        SkinInfo skinInfo = mPrefUtils.getSkin();
 
-        SkinInfo SkinInfo = mPrefUtils.getSkin();
-
-        if (!validPluginParams(SkinInfo)) {
+        if (!validPluginParams(skinInfo)) {
             mCurSkinInfo = SkinInfo.defaultSkin;
-            return;
         }
         try {
-            loadPlugin(SkinInfo);
+            loadPlugin(skinInfo);
         } catch (Exception e) {
             mPrefUtils.clear();
             e.printStackTrace();
         }
     }
 
+    /**
+     * 获取一个插件包的包名
+     *
+     * @param skinPluginPath
+     * @return
+     */
     private PackageInfo getPackageInfo(String skinPluginPath) {
         PackageManager pm = mContext.getPackageManager();
         return pm.getPackageArchiveInfo(skinPluginPath, PackageManager.GET_ACTIVITIES);
@@ -77,27 +84,38 @@ public class SkinManager {
      *
      * @throws Exception
      */
-    private void loadPlugin(SkinInfo SkinInfo) throws Exception {
-        mResourceManager = generateResourceManager(SkinInfo);
+    private void loadPlugin(SkinInfo skinInfo) throws Exception {
+        mResourceManager = generateResourceManager(skinInfo);
     }
 
-    private boolean validPluginParams(SkinInfo SkinInfo) {
-        if (TextUtils.isEmpty(SkinInfo.getPluginPath()) || TextUtils.isEmpty(SkinInfo.getPckName())) {
+    /**
+     * 检查皮肤插件是否完整
+     * 包名_路径_文件是否存在
+     *
+     * @param skinInfo
+     */
+    private boolean validPluginParams(SkinInfo skinInfo) {
+        if (TextUtils.isEmpty(skinInfo.getPluginPath()) || TextUtils.isEmpty(skinInfo.getPckName())) {
             return false;
         }
 
-        File file = new File(SkinInfo.getPluginPath());
+        File file = new File(skinInfo.getPluginPath());
         if (!file.exists())
             return false;
 
-        PackageInfo info = getPackageInfo(SkinInfo.getPluginPath());
-        if (!info.packageName.equals(SkinInfo.getPckName()))
+        PackageInfo info = getPackageInfo(skinInfo.getPluginPath());
+        if (!info.packageName.equals(skinInfo.getPckName()))
             return false;
         return true;
     }
 
-    private void checkPluginParamsThrow(SkinInfo SkinInfo) {
-        if (!validPluginParams(SkinInfo)) {
+    /**
+     * 检查皮肤插件是否完整
+     *
+     * @param skinInfo
+     */
+    private void checkPluginParamsThrow(SkinInfo skinInfo) {
+        if (!validPluginParams(skinInfo)) {
             throw new IllegalArgumentException("skinPluginPath or skinPkgName not valid ! ");
         }
     }
@@ -108,12 +126,35 @@ public class SkinManager {
     public void removeAnySkin() {
         mCurSkinInfo = SkinInfo.defaultSkin;
         clearPluginInfo();
+        mResourceManager = generateResourceManager(mCurSkinInfo);
         notifyChangedListeners();
     }
 
+    /**
+     * 刷新皮肤
+     */
+    public void refrshSkin() {
+        changeSkin(mCurSkinInfo);
+    }
+
+    public void changeSkin(SkinInfo skinInfo) {
+        changeSkin(skinInfo, null);
+    }
+
+    public void changeSkin(SkinInfo skinInfo, ISkinChangingCallback callback) {
+
+        if (callback == null) {
+            callback = ISkinChangingCallback.DEFAULT_SKIN_CHANGING_CALLBACK;
+        }
+
+        if (skinInfo.isUsePlugin()) {
+            changeSkinPlugin(skinInfo, callback);
+        } else {
+            changeSkinInside(skinInfo, callback);
+        }
+    }
 
     public ResourceManager getResourceManager() {
-        mResourceManager = generateResourceManager(mCurSkinInfo);
         return mResourceManager;
     }
 
@@ -121,11 +162,14 @@ public class SkinManager {
     /**
      * 应用内换肤，传入资源区别的后缀
      */
-    public void changeSkin(SkinInfo skinInfo) {
+    private void changeSkinInside(SkinInfo skinInfo, ISkinChangingCallback callback) {
+        callback.onStart();
         clearPluginInfo();//clear before
         mCurSkinInfo = skinInfo;
+        mResourceManager = generateResourceManager(skinInfo);
         mPrefUtils.saveSkin(skinInfo);
         notifyChangedListeners();
+        callback.onComplete();
     }
 
     private void clearPluginInfo() {
@@ -136,8 +180,9 @@ public class SkinManager {
     /**
      * 保存皮肤信息到本地
      */
-    private void updatePluginInfo(SkinInfo SkinInfo) {
-        mPrefUtils.saveSkin(SkinInfo);
+    private void updatePluginInfo(SkinInfo skinInfo) {
+        mPrefUtils.saveSkin(skinInfo);
+        mCurSkinInfo = skinInfo;
     }
 
     /**
@@ -145,13 +190,9 @@ public class SkinManager {
      *
      * @param callback
      */
-    public void changeSkin(final SkinInfo skinInfo, ISkinChangingCallback callback) {
-        if (callback == null)
-            callback = ISkinChangingCallback.DEFAULT_SKIN_CHANGING_CALLBACK;
+    private void changeSkinPlugin(final SkinInfo skinInfo, ISkinChangingCallback callback) {
         final ISkinChangingCallback skinChangingCallback = callback;
-
         skinChangingCallback.onStart();
-
         try {
             checkPluginParamsThrow(skinInfo);
         } catch (IllegalArgumentException e) {
@@ -180,7 +221,6 @@ public class SkinManager {
                 }
                 try {
                     updatePluginInfo(skinInfo);
-                    mCurSkinInfo = skinInfo;
                     notifyChangedListeners();
                     skinChangingCallback.onComplete();
                 } catch (Exception e) {
@@ -192,24 +232,8 @@ public class SkinManager {
         }.execute();
     }
 
-//    /**
-//     * 为activity更新皮肤
-//     * <p>
-//     * 每次换肤,都会重复查找需要换肤的view__性能问题
-//     *
-//     * @param activity
-//     */
-//    public void apply(Activity activity) {
-//        List<SkinView> skinViews = SkinAttrSupport.getSkinViews(activity);
-//        if (skinViews == null) return;
-//        for (SkinView skinView : skinViews) {
-//            skinView.apply();
-//        }
-//    }
-
-    public void register(final SkinInterface skinInterface) {
+    public void register(SkinInterface skinInterface) {
         mInterFaces.add(skinInterface);
-        skinInterface.apply();
     }
 
     public void unregister(Activity activity) {
@@ -235,10 +259,10 @@ public class SkinManager {
         }
     }
 
-    public void applyView(View view, SkinInfo SkinInfo) {
+    public void applyView(View view, SkinInfo skinInfo) {
         List<SkinView> skinViews = SkinAttrSupport.getSkinViews(view);
         for (SkinView skinView : skinViews) {
-            skinView.apply(generateResourceManager(SkinInfo));
+            skinView.apply(generateResourceManager(skinInfo));
         }
     }
 

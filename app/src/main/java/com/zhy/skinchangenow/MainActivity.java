@@ -47,7 +47,6 @@ public class MainActivity extends SkinAcitivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SkinManager.getInstance().register(this);
         setContentView(R.layout.activity_main);
         initView();
         initEvents();
@@ -70,7 +69,6 @@ public class MainActivity extends SkinAcitivity {
                     viewHoder = (ViewHoder) convertView.getTag();
                 }
                 SkinManager.getInstance().injectSkin(convertView);
-                Log.e("viewhoder", (viewHoder == null) + "");
                 viewHoder.tv.setText(getItem(position));
                 return convertView;
             }
@@ -143,7 +141,7 @@ public class MainActivity extends SkinAcitivity {
 
         switch (id) {
             case R.id.id_action_plugin_skinchange:
-                com.zhy.changeskin.SkinManager.getInstance().changeSkin(skinInfo, new com.zhy.changeskin.callback.ISkinChangingCallback() {
+                SkinManager.getInstance().changeSkin(skinInfo, new com.zhy.changeskin.callback.ISkinChangingCallback() {
                     @Override
                     public void onStart() {
                     }
@@ -180,7 +178,6 @@ public class MainActivity extends SkinAcitivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SkinManager.getInstance().unregister(this);
     }
 
     @Override
@@ -189,7 +186,7 @@ public class MainActivity extends SkinAcitivity {
     }
 
     @Override
-    public boolean isNeedLazyApply() {
-        return false;
+    public boolean isSkinLazyApply() {
+        return true;
     }
 }

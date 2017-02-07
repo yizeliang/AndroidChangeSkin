@@ -2,13 +2,12 @@
 一种完全无侵入的换肤方式，支持插件式和应用内，无需重启Activity.
 
 
-## 需要修改内容
--  生命周期优化
--  listview根节点view 是否会由于tag的影响造成复用
--  recycleview的复用问题 动态改变问题
--  加载失败 resourceManager回滚问题
+## 依旧存在的问题
 
-## 已完成
+- 对于ListView和RecycleView item 根布局如果需要换肤,则需要加入一个节点,否则换肤不生效
+- 对于viewpager+fragment,由于很多人优化的方式不一样,则需要自己扩展,已提供对任何View的换肤方法,并且添加一个可以给任何View设置任何主题的方法,该方法允许 对特定View不使用 当前主题,而使用另一个主题
+
+## 更新日志
 
 -version 2.0
 ```java
@@ -16,7 +15,8 @@
 2 修复background 设置color失效的问题
 3 抽取工具类,可以给任何view手动换肤
 4 针对viewpager的说明:可以再创建的时候调用上面的工具类,完成换肤,如果已经加载的,关于监听,已经在activity中进行了监听,那么就能够实现动态换肤,不需要再对观察者进行处理
-5 
+5 关于ListView以及RecycleView的解决方案,在item root节点下再增加一个节点包裹起来
+6 Acitvity 生命周期优化已经成功
 ```
 
 ## super md

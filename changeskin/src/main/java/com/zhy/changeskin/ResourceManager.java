@@ -5,8 +5,6 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
-import com.zhy.changeskin.utils.L;
-
 /**
  * Created by zhy on 15/9/22.
  */
@@ -37,7 +35,6 @@ public class ResourceManager
         try
         {
             name = appendSuffix(name);
-            L.e("name = " + name + " , " + mPluginPackageName);
             return mResources.getDrawable(mResources.getIdentifier(name, DEFTYPE_DRAWABLE, mPluginPackageName));
         } catch (Resources.NotFoundException e)
         {
