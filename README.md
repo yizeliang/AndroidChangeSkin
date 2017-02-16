@@ -2,6 +2,13 @@
 一种完全无侵入的换肤方式，支持插件式和应用内，无需重启Activity.
 
 
+## 使用方法
+
+1 Application中初始化 SkinManager.getInstance().init(this);
+2 继承SkinAcitivity 
+3 方法权限设置为protect,方便继承和修改
+
+
 ## 依旧存在的问题
 
 - 对于ListView和RecycleView item 根布局如果需要换肤,则需要加入一个节点,否则换肤不生效
