@@ -4,9 +4,10 @@
 
 ## 使用方法
 
-1 Application中初始化 SkinManager.getInstance().init(this);
-2 继承SkinAcitivity 
-3 方法权限设置为protect,方便继承和修改
+- Application中初始化 SkinManager.getInstance().init(this);
+- 继承SkinAcitivity 
+- 方法权限设置为protect,方便继承和修改
+
 
 
 ## 依旧存在的问题
@@ -28,8 +29,7 @@
 8 提供给特定View设置特定皮肤的方法
 9 使用的话,建议下载源码,然后添加项目依赖,毕竟目前只支持几个属性,可以自己扩展
 10 该库是支持自定义view的自定义属性的,我想这点对大家来说并不难
-
-
+11 同时添加了多个皮肤放到一个资源包中的支持
 ```
 
 ## super md
